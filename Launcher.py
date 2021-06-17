@@ -5,13 +5,13 @@ from subprocess import call
 from requests import get
 from os import remove, mkdir, makedirs
 import subprocess
-from os.path import exists, join, basename, abspath, expanduser
+from os.path import exists, join, abspath, expanduser
 from shutil import rmtree
 import sys
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtCore import QObject, QThread, pyqtSignal
 from time import sleep
-import datetime
+from datetime import datetime
 import Custom
 
 def resource_path(relative_path):
@@ -83,7 +83,7 @@ class Ui_Dialog(object):
 
     def updateLog(self, input):
         original = self.log
-        self.log = datetime.datetime.now().strftime("[%H:%M:%S] ") + input + "\n" + original
+        self.log = datetime.now().strftime("[%H:%M:%S] ") + input + "\n" + original
         with open(join(path,"launcher_latest.log"), 'w') as file:
             file.write(self.log)
         self.textBrowser.setPlainText(self.log)
