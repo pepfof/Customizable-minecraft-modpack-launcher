@@ -25,7 +25,7 @@ def resource_path(relative_path):
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName(Custom.Launcher_title)
-        Dialog.setFixedSize(423, 300)
+        Dialog.setFixedSize(423, 320)
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap(resource_path("icon.ico")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         Dialog.setWindowIcon(icon)
@@ -51,6 +51,10 @@ class Ui_Dialog(object):
         self.pushButton.setObjectName("pushButton")
         self.pushButton.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.pushButton.clicked.connect(self.runLongTask)
+        self.aboutbutton = QtWidgets.QPushButton(Dialog)
+        self.aboutbutton.setGeometry(QtCore.QRect(391, 294, 20, 20))
+        self.aboutbutton.setObjectName("pushButton")
+        self.aboutbutton.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.textBrowser = QtWidgets.QTextBrowser(Dialog)
         self.textBrowser.setGeometry(QtCore.QRect(10, 115, 401, 175))
         self.textBrowser.setObjectName("textBrowser")
@@ -71,8 +75,10 @@ class Ui_Dialog(object):
         self.label.setText(_translate("Dialog", "Username:"))
         self.lineEdit_2.setInputMask(_translate("Dialog", "00000"))
         self.pushButton.setToolTip(_translate("Dialog", "Shift+click to force re-download all"))
+        self.aboutbutton.setToolTip(_translate("Dialog", "About"))
         self.label_2.setText(_translate("Dialog", "Max. Mem. (MB)"))
         self.pushButton.setText(_translate("Dialog", "Play!"))
+        self.aboutbutton.setText(_translate("Dialog", "?"))
         self.label_3.setText(_translate("Dialog", "Ready!"))
 
     def updateLog(self, input):
@@ -257,7 +263,7 @@ class Worker(QObject):
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
-    Dialog = QtWidgets.QDialog()
+    Dialog = QtWidgets.QDialog(None, QtCore.Qt.WindowSystemMenuHint | QtCore.Qt.WindowTitleHint)
     ui = Ui_Dialog()
     ui.setupUi(Dialog)
     Dialog.show()

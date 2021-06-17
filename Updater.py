@@ -22,7 +22,7 @@ class Ui_Dialog(object):
     
     def setupUi(self, Dialog):
         Dialog.setObjectName(Custom.Updater_title)
-        Dialog.setFixedSize(423, 300)
+        Dialog.setFixedSize(423, 311)
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap(resource_path("icon.ico")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         Dialog.setWindowIcon(icon)
@@ -49,6 +49,10 @@ class Ui_Dialog(object):
         self.progressBar.setObjectName("progressBar")
         self.pushButton.clicked.connect(self.runLongTask)
         self.dirselect.clicked.connect(self.dirselecting)
+        self.aboutbutton = QtWidgets.QPushButton(Dialog)
+        self.aboutbutton.setGeometry(QtCore.QRect(391, 285, 20, 20))
+        self.aboutbutton.setObjectName("pushButton")
+        self.aboutbutton.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
 
         self.retranslateUi(Dialog)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
@@ -58,9 +62,11 @@ class Ui_Dialog(object):
     def retranslateUi(self, Dialog):
         _translate = QtCore.QCoreApplication.translate
         Dialog.setWindowTitle(_translate("Dialog", Custom.Updater_title))
+        self.aboutbutton.setToolTip(_translate("Dialog", "About"))
         self.label.setText(_translate("Dialog", "Minecraft Directory:"))
         self.pushButton.setToolTip(_translate("Dialog", "Shift+click to force download all"))
         self.pushButton.setText(_translate("Dialog", "Update!"))
+        self.aboutbutton.setText(_translate("Dialog", "?"))
         self.dirselect.setText(_translate("Dialog", "..."))
     
     def updateLog(self, input):
@@ -173,7 +179,7 @@ class Worker(QObject):
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
-    Dialog = QtWidgets.QDialog()
+    Dialog = QtWidgets.QDialog(None, QtCore.Qt.WindowSystemMenuHint | QtCore.Qt.WindowTitleHint)
     ui = Ui_Dialog()
     ui.setupUi(Dialog)
     Dialog.show()
