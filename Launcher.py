@@ -1,9 +1,9 @@
-from minecraft_launcher_lib.forge import install_forge_version
+from minecraft_launcher_lib.forge import install_forge_version, install_forge_old_version
 from minecraft_launcher_lib.utils import get_installed_versions
 from minecraft_launcher_lib.command import get_minecraft_command
 from subprocess import call
 from requests import get
-from os import remove, makedirs, makedirs
+from os import remove, mkdir, makedirs
 import subprocess
 from os.path import exists, join, basename, abspath, expanduser
 from shutil import rmtree
@@ -12,6 +12,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtCore import QObject, QThread, pyqtSignal
 from time import sleep
 import datetime
+import Custom
 
 def resource_path(relative_path):
     try:
@@ -23,10 +24,10 @@ def resource_path(relative_path):
 
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
-        Dialog.setObjectName("Memcraft launcher")
+        Dialog.setObjectName(Custom.Launcher_title)
         Dialog.setFixedSize(423, 300)
         icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(resource_path("briefcase_business_bag_icon_188751.ico")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon.addPixmap(QtGui.QPixmap(resource_path("icon.ico")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         Dialog.setWindowIcon(icon)
         self.lineEdit = QtWidgets.QLineEdit(Dialog)
         self.lineEdit.setGeometry(QtCore.QRect(10, 30, 281, 24))
@@ -66,10 +67,10 @@ class Ui_Dialog(object):
 
     def retranslateUi(self, Dialog):
         _translate = QtCore.QCoreApplication.translate
-        Dialog.setWindowTitle(_translate("Dialog", "Memcraft Launcher"))
+        Dialog.setWindowTitle(_translate("Dialog", Custom.Launcher_title))
         self.label.setText(_translate("Dialog", "Username:"))
         self.lineEdit_2.setInputMask(_translate("Dialog", "00000"))
-        self.pushButton.setToolTip(_translate("Dialog", "Shift+click to force download all"))
+        self.pushButton.setToolTip(_translate("Dialog", "Shift+click to force re-download all"))
         self.label_2.setText(_translate("Dialog", "Max. Mem. (MB)"))
         self.pushButton.setText(_translate("Dialog", "Play!"))
         self.label_3.setText(_translate("Dialog", "Ready!"))
@@ -119,6 +120,10 @@ class Worker(QObject):
         self.progressBar.emit("value", counter)
         return 0
 
+    def reportTwice(self, input):
+        self.label_3.emit(input)
+        self.logging.emit(input)
+
     def run(self):
         global check
         modifiers = QtWidgets.QApplication.keyboardModifiers()
@@ -137,7 +142,7 @@ class Worker(QObject):
         
         if(force):
             if(check==0):
-                self.logging.emit(f'Warning!\nForce redownloading will\ndelete all previously downloaded content!\nShift-click "Update!" again to continue.\n\n\n\n\n')
+                self.logging.emit(f'Warning!\nForce re-downloading will also\ndelete all minecraft settings and config!\nShift-click "Update!" again to continue.\n\n\n\n\n')
                 check = 1
                 self.lineEdit_set.emit(1)
                 self.pushButton.emit(1)
@@ -149,19 +154,29 @@ class Worker(QObject):
         self.pushButton.emit(0)
         self.lineEdit2_set.emit(0)
         self.lineEdit_set.emit(0)
-        path = join(expanduser('~'), '.memcraft')
+
+        path = join(expanduser('~'), Custom.Launcher_folder_path)
+
         maxmem=f"-Xmx{int(ui.lineEdit_2.text())}M"
         jargs = [maxmem]
-        options = {
-            "username": ui.lineEdit.text(),
-            "uuid": "0",
-            "token": "0",
-            "jvmArguments": jargs,
-            "server": "217.107.197.90",
-            "port":"25565",
-            "launcherName": "Memcraft"
-        }
-        
+        if(Custom.Server_Autoconnect == 1):
+            options = {
+                "username": ui.lineEdit.text(),
+                "uuid": "0",
+                "token": "0",
+                "jvmArguments": jargs,
+                "server": Custom.Server_IP,
+                "port": Custom.Server_port,
+                "launcherName": Custom.Launcher_title
+            }
+        else:
+            options = {
+                "username": ui.lineEdit.text(),
+                "uuid": "0",
+                "token": "0",
+                "jvmArguments": jargs,
+                "launcherName": Custom.Launcher_title
+            }
             
         path_to_txtr = join(path, 'ram.txt')
         with open(path_to_txtr, 'w') as file:
@@ -170,36 +185,47 @@ class Worker(QObject):
         with open(path_to_txtn, 'w') as file:
                 file.write(ui.lineEdit.text())
 
-        self.label_3.emit(f'Getting Files...')
-        self.logging.emit(f'Getting Files...')
         max_value = [0]
 
         callback = {
-            "setStatus": lambda text: self.logging.emit(text),
+            "setStatus": lambda text: self.reportTwice(text),
             "setProgress": lambda value: self.progressbar(value, max_value[0]),
             "setMax": lambda value: maximum(max_value, value)
         }
 
-        if(force):
-            if(exists(path)):
-                rmtree(path)
-            install_forge_version("1.12.2-14.23.5.2855", path, callback=callback)            
-        elif(not force):
-             if(not exists(join(path,'versions', '1.12.2-forge-14.23.5.2855', '1.12.2-forge-14.23.5.2855.jar'))):
-                 install_forge_version("1.12.2-14.23.5.2855", path, callback=callback)
+        
+        self.reportTwice(f'Downloading and installing minecraft forge...')
+
+        if(Custom.Is_below_1_13):
+            if(force):
+                if(exists(path)):
+                    rmtree(path)
+                install_forge_old_version(Custom.Forge_version, path, callback=callback)            
+            elif(not force):
+                if(not exists(join(path,'versions', Custom.Forge_version_name, Custom.Forge_version_name))):
+                    install_forge_old_version(Custom.Forge_version, path, callback=callback)
+        else:
+            if(force):
+                if(exists(path)):
+                    rmtree(path)
+                install_forge_version(Custom.Forge_version, path, callback=callback)            
+            elif(not force):
+                if(not exists(join(path,'versions', Custom.Forge_version_name, Custom.Forge_version_name))):
+                    install_forge_version(Custom.Forge_version, path, callback=callback)
 
 
-        self.label_3.emit(f'Downloading and installing minecraft...')
-        self.logging.emit(f'Downloading and installing minecraft...')
+        command = get_minecraft_command(Custom.Forge_version_name, path, options)
 
-        command = get_minecraft_command("1.12.2-forge-14.23.5.2855", path, options)
-        req = get("https://pepfof.com/minecraft/mine.txt")
+        
+        self.reportTwice(f'Downloading ' + Custom.Modpack_name)
+
+        req = get(Custom.Source_URL+"mine.txt")
         files_new = set(req.text.split('\n'))
         files_new.remove('')
         files_new = {a[1:].replace('\\', '/') for a in files_new}
-        req = get("https://pepfof.com/minecraft/dirs.txt")
+        req = get(Custom.Source_URL+"dirs.txt")
         all_dirs = {i[1:].replace('\\', '/') for i in req.text.split('\n') if not exists(join(path,i[1:]))}
-        req = get("https://pepfof.com/minecraft/remv.txt")
+        req = get(Custom.Source_URL+"remv.txt")
         files_delete = {i[1:].replace('\\', '/') for i in req.text.split('\n') if i != '' and exists(join(path,i[1:]))}
         for i in files_delete:
             remove(join(path,i))
@@ -211,16 +237,15 @@ class Worker(QObject):
         counter = 0
         for i in files_new:
             with open(join(path,i), 'wb') as f:
-                ufr = get(f"https://pepfof.com/minecraft/{i}")
+                ufr = get(f"{Custom.Source_URL}{i}")
                 f.write(ufr.content)
                 counter += 1
                 self.progressbar(counter, len(files_new))
                 self.logging.emit(f'Download {i}')
 
-        self.label_3.emit("Memcraft launched!")
-        self.logging.emit("Memcraft launched!")
+        self.reportTwice(Custom.Modpack_name+" launched!")
         self.progressbar(1,0)
-        self.logging.emit(subprocess.run(command).stdout)
+        call(command,cwd=path)
         self.pushButton.emit(1)
         self.lineEdit2_set.emit(1)
         self.lineEdit_set.emit(1)
@@ -238,7 +263,8 @@ if __name__ == "__main__":
     Dialog.show()
     
     check = 0
-    path = join(expanduser('~'), '.memcraft')
+    path = join(expanduser('~'), Custom.Launcher_folder_path)
+    print(path)
     if(not exists(path)):
         mkdir(path)
 

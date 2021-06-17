@@ -11,7 +11,7 @@ import random
 import json
 import os
 
-__all__ = [" install_forge_version","run_forge_installer","list_forge_versions","find_forge_version"]
+__all__ = ["install_forge_version","install_forge_old_version","run_forge_installer","list_forge_versions","find_forge_version"]
 
 def extract_file(handler: zipfile.ZipFile, zip_path: str, extract_path: str):
     """
@@ -80,14 +80,46 @@ def install_forge_version(versionid: str,path: str,callback: Dict[str,Callable]=
     if callback == None:
         callback = {}
     FORGE_DOWNLOAD_URL = "https://files.minecraftforge.net/maven/net/minecraftforge/forge/{version}/forge-{version}-installer.jar"
-    temp_file_path = os.path.join(tempfile.gettempdir(),"forge-" + str(1) + ".tmp")
+    temp_file_path = os.path.join(tempfile.gettempdir(),"forge-" + str(random.randrange(1,100000)) + ".tmp")
     download_file(FORGE_DOWNLOAD_URL.format(version=versionid),temp_file_path,callback)
-    try:
-         zf = zipfile.ZipFile(temp_file_path,"r")
-    except:
-        os.remove(temp_file_path)
-        download_file(FORGE_DOWNLOAD_URL.format(version=versionid),temp_file_path,callback)
-        zf = zipfile.ZipFile(temp_file_path,"r")
+    zf = zipfile.ZipFile(temp_file_path,"r")
+    #Read the install_profile.json
+    with zf.open("install_profile.json","r") as f:
+        version_content = f.read()
+    version_data = json.loads(version_content)
+    forge_version_id = version_data["version"]
+    #Make sure, the base version is installed
+    install_minecraft_version(version_data["minecraft"],path,callback=callback)
+    #Install all needed libs from install_profile.json
+    install_libraries(version_data,path,callback)
+    #Extract the version.json
+    version_json_path = os.path.join(path,"versions",forge_version_id,forge_version_id + ".json")
+    extract_file(zf,"version.json",version_json_path)
+    #Extract forge libs from the installer
+    forge_lib_path = os.path.join(path,"libraries","net","minecraftforge","forge",versionid)
+    extract_file(zf,"maven/net/minecraftforge/forge/{version}/forge-{version}.jar".format(version=versionid),os.path.join(forge_lib_path,"forge-" + versionid + ".jar"))
+    extract_file(zf,"maven/net/minecraftforge/forge/{version}/forge-{version}-universal.jar".format(version=versionid),os.path.join(forge_lib_path,"forge-" + versionid + "-universal.jar"))
+    #Extract the client.lzma
+    lzma_path = os.path.join(tempfile.gettempdir(),"lzma-" + str(random.randrange(1,100000)) + ".tmp")
+    extract_file(zf,"data/client.lzma",lzma_path)
+    zf.close()
+    os.remove(temp_file_path)
+    #Install the rest with the vanilla function
+    install_minecraft_version(forge_version_id,path,callback=callback)
+    #Run the processors
+    forge_processors(version_data,path,lzma_path)
+    os.remove(lzma_path)
+
+def install_forge_old_version(versionid: str,path: str,callback: Dict[str,Callable]=None):
+    """
+    Installs a forge version. Fore more information look at the documentation.
+    """
+    if callback == None:
+        callback = {}
+    FORGE_DOWNLOAD_URL = "https://files.minecraftforge.net/maven/net/minecraftforge/forge/{version}/forge-{version}-installer.jar"
+    temp_file_path = os.path.join(tempfile.gettempdir(),"forge-" + str(random.randrange(1,100000)) + ".tmp")
+    download_file(FORGE_DOWNLOAD_URL.format(version=versionid),temp_file_path,callback)
+    zf = zipfile.ZipFile(temp_file_path,"r")
     #Read the install_profile.json
     with zf.open("install_profile.json","r") as f:
         version_content = f.read()
@@ -139,3 +171,4 @@ def find_forge_version(vanilla_version: str) -> str:
         if version_split[0] == vanilla_version:
             return i
     return None
+

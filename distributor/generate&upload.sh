@@ -5,5 +5,5 @@ sed -i 's / \\ g' mine.txt
 sed -i 's \./ \\ g' dirs.txt 
 sed -i 's / \\ g' dirs.txt
 git add -A
-git commit -m "Incremental Minecraft Update"
+git commit
 git push

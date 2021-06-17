@@ -7,6 +7,7 @@ from PyQt5.QtCore import QObject, QThread, pyqtSignal
 from PyQt5.QtWidgets import QWidget, QPushButton, QLineEdit, QFileDialog, QApplication
 from getpass import getuser
 import datetime
+import Custom
 
 def resource_path(relative_path):
     try:
@@ -20,10 +21,10 @@ def resource_path(relative_path):
 class Ui_Dialog(object):
     
     def setupUi(self, Dialog):
-        Dialog.setObjectName("Memcraft Mod Updater")
+        Dialog.setObjectName(Custom.Updater_title)
         Dialog.setFixedSize(423, 300)
         icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(resource_path("briefcase_business_bag_icon_188751.ico")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon.addPixmap(QtGui.QPixmap(resource_path("icon.ico")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         Dialog.setWindowIcon(icon)
         self.pushButton = QtWidgets.QPushButton(Dialog)
         self.pushButton.setGeometry(QtCore.QRect(310, 10, 101, 44))
@@ -56,7 +57,7 @@ class Ui_Dialog(object):
         
     def retranslateUi(self, Dialog):
         _translate = QtCore.QCoreApplication.translate
-        Dialog.setWindowTitle(_translate("Dialog", "Memcraft Mod Updater"))
+        Dialog.setWindowTitle(_translate("Dialog", Custom.Updater_title))
         self.label.setText(_translate("Dialog", "Minecraft Directory:"))
         self.pushButton.setToolTip(_translate("Dialog", "Shift+click to force download all"))
         self.pushButton.setText(_translate("Dialog", "Update!"))
@@ -134,7 +135,7 @@ class Worker(QObject):
             if(check==1):
                 check = 0
 
-        req = get("https://pepfof.com/minecraft/mine.txt")            
+        req = get(Custom.Source_URL+"mine.txt")            
         files_new = set(req.text.split('\n'))
         files_new.remove('')
         files_new = {a[1:].replace('\\', '/') for a in files_new}
@@ -143,9 +144,9 @@ class Worker(QObject):
                 if(exists(join(fpath,i))):
                     remove(join(fpath,i))
         self.logging.emit(f'Checking for updates...')        
-        req = get("https://pepfof.com/minecraft/dirs.txt")
+        req = get(Custom.Source_URL+"/dirs.txt")
         all_dirs = {i[1:].replace('\\', '/') for i in req.text.split('\n') if not exists(join(fpath,i[1:]))}
-        req = get("https://pepfof.com/minecraft/remv.txt")
+        req = get(Custom.Source_URL+"remv.txt")
         files_delete = {i[1:].replace('\\', '/') for i in req.text.split('\n') if i != '' and exists(join(fpath,i[1:]))}
         for i in files_delete:
             remove(join(fpath,i))
@@ -157,13 +158,13 @@ class Worker(QObject):
         counter = 0
         for i in files_new:
             with open(join(fpath,i), 'wb') as f:
-                ufr = get(f"https://pepfof.com/minecraft/{i}")
+                ufr = get(f"{Custom.Source_URL}{i}")
                 f.write(ufr.content)
                 counter += 1
                 self.progressbar(counter, len(files_new))
                 self.logging.emit(f'Download {i}')
 
-        self.logging.emit("Done updating!")
+        self.logging.emit(f"Done updating {Custom.Modpack_name}!")
         self.progressbar(1,0)
         self.dirselect.emit(1)
         self.lineEdit_set.emit(1)
