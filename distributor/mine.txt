@@ -1,0 +1,3 @@
+\mine.txt
+\dirs.txt
+\generate&upload.sh
