@@ -264,7 +264,6 @@ if __name__ == "__main__":
     
     check = 0
     path = join(expanduser('~'), Custom.Launcher_folder_path)
-    print(path)
     if(not exists(path)):
         mkdir(path)
 
