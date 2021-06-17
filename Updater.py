@@ -109,9 +109,9 @@ class Worker(QObject):
         global check
         modifiers = QtWidgets.QApplication.keyboardModifiers()
         if modifiers == QtCore.Qt.ShiftModifier:
-            force = 1
+            force = True
         else:
-            force = 0
+            force = False
 
         if(ui.lineEdit.text() == ''):
             self.logging.emit(f'No directory selected!')
@@ -124,16 +124,16 @@ class Worker(QObject):
         with open(path_to_txtn, 'w') as file:
                 file.write(ui.lineEdit.text())
         if(force):
-            if(check==0):
+            if(not check):
                 self.logging.emit(f'Warning!\nForce redownloading will\ndelete all previously downloaded content!\nShift-click "Update!" again to continue.\n\n\n\n\n')
-                check = 1
+                check = True
                 self.dirselect.emit(1)
                 self.lineEdit_set.emit(1)
                 self.pushButton.emit(1)
                 self.finished.emit()
                 return 0
-            if(check==1):
-                check = 0
+            if(check):
+                check = False
 
         req = get(Custom.Source_URL+"mine.txt")            
         files_new = set(req.text.split('\n'))
@@ -178,7 +178,7 @@ if __name__ == "__main__":
     ui.setupUi(Dialog)
     Dialog.show()
     path = './'
-    check = 0
+    check = False
     if(not exists(path)):
         mkdir(path)
     
