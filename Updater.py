@@ -6,7 +6,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtCore import QObject, QThread, pyqtSignal
 from PyQt5.QtWidgets import QWidget, QPushButton, QLineEdit, QFileDialog, QApplication
 from getpass import getuser
-import datetime
+from datetime import datetime
 import Custom
 
 def resource_path(relative_path):
@@ -71,7 +71,7 @@ class Ui_Dialog(object):
     
     def updateLog(self, input):
         original = self.log
-        self.log = datetime.datetime.now().strftime("[%H:%M:%S] ") + input + "\n" + original
+        self.log = datetime.now().strftime("[%H:%M:%S] ") + input + "\n" + original
         with open("./updater_latest.log", 'w') as file:
             file.write(self.log)
         self.textBrowser.setPlainText(self.log)
