@@ -134,9 +134,9 @@ class Worker(QObject):
         global check
         modifiers = QtWidgets.QApplication.keyboardModifiers()
         if modifiers == QtCore.Qt.ShiftModifier:
-            force = 1
+            force = True
         else:
-            force = 0
+            force = False
         if(ui.lineEdit.text() == ''):
             self.label_3.emit(f'Please input username!')
             self.finished.emit()
@@ -147,15 +147,15 @@ class Worker(QObject):
             return 0
         
         if(force):
-            if(check==0):
+            if(not check):
                 self.logging.emit(f'Warning!\nForce re-downloading will also\ndelete all minecraft settings and config!\nShift-click "Update!" again to continue.\n\n\n\n\n')
-                check = 1
+                check = True
                 self.lineEdit_set.emit(1)
                 self.pushButton.emit(1)
                 self.finished.emit()
                 return 0
-            if(check==1):
-                check = 0
+            if(check):
+                check = False
         
         self.pushButton.emit(0)
         self.lineEdit2_set.emit(0)
@@ -268,9 +268,8 @@ if __name__ == "__main__":
     ui.setupUi(Dialog)
     Dialog.show()
     
-    check = 0
+    check = False
     path = join(expanduser('~'), Custom.Launcher_folder_path)
-    print(path)
     if(not exists(path)):
         mkdir(path)
 
