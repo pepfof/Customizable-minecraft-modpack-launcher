@@ -10,7 +10,7 @@ from shutil import rmtree
 import sys
 from PyQt5.QtCore import QObject, QThread, pyqtSignal, QRect, Qt, QCoreApplication, QMetaObject
 from PyQt5.QtGui import QPixmap, QIcon, QCursor
-from PyQt5.QtWidgets import QLabel, QLineEdit, QPushButton, QProgressBar, QTextBrowser, QApplication, QDialog
+from PyQt5.QtWidgets import QLabel, QLineEdit, QPushButton, QProgressBar, QTextBrowser, QApplication, QDialog, QMessageBox
 from time import sleep
 from datetime import datetime
 import Custom
@@ -56,6 +56,7 @@ class Ui_Dialog(object):
         self.aboutbutton.setGeometry(QRect(391, 294, 20, 20))
         self.aboutbutton.setObjectName("pushButton")
         self.aboutbutton.setCursor(QCursor(Qt.PointingHandCursor))
+        self.aboutbutton.clicked.connect(self.knopka)
         self.textBrowser = QTextBrowser(Dialog)
         self.textBrowser.setGeometry(QRect(10, 115, 401, 175))
         self.textBrowser.setObjectName("textBrowser")
@@ -69,6 +70,22 @@ class Ui_Dialog(object):
         QMetaObject.connectSlotsByName(Dialog)
 
         self.log = " "
+
+    def knopka(self):
+        icon = QIcon()
+        icon.addPixmap(QPixmap(resource_path("icon.ico")), QIcon.Normal, QIcon.Off)
+        msgBox = QMessageBox()
+        msgBox.setText(f'''<h2>Customizable minecraft modpack launcher</h2>
+        by bopchik and pepfof, licensed under the <a href = "https://github.com/pepfof/Customizable-minecraft-modpack-launcher/blob/main/LICENSE">BSD 2-clause license</a><br>
+        <a href = "https://gitlab.com/JakobDev/minecraft-launcher-lib">Minecraft Launcher Lib by JakobDev</a>, licensed under the <a href = "https://gitlab.com/JakobDev/minecraft-launcher-lib/-/blob/master/LICENSE">BSD 2-clause license</a><br><br><br>
+        
+        {Custom.Modpack_name} by {Custom.Modpack_author}''')
+        
+        msgBox.setWindowTitle("About")
+        msgBox.setWindowIcon(icon)
+        msgBox.setIcon(QMessageBox.Information)
+        msgBox.setStandardButtons(QMessageBox.Ok)
+        msgBox.exec()
 
     def retranslateUi(self, Dialog):
         _translate = QCoreApplication.translate

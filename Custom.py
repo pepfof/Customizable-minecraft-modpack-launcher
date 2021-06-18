@@ -2,6 +2,7 @@ Modpack_name = "Minecraft Modpack"                  #appears in updater and laun
 Launcher_title = "Modpack Launcher"                 #name of launcher window
 Updater_title = "Modpack Updater"                   #name of updater window
 Launcher_folder_path = ".minecraft_modpack"         #this is relative to the user/home folder
+Modpack_author = "Modpack Author"
 
 Forge_version = "1.12.2-14.23.5.2855"               #exact forge version names can be found on the forge website
 Forge_version_name = "1.12.2-forge-14.23.5.2855"    #the folder forge generates in the minecraft/versions folder, as well as the name it shows in the vanilla minecraft launcher. Find this one out yourself
@@ -12,3 +13,4 @@ Source_URL = "https://pepfof.com/minecraft/"        #url of the distributor fold
 Server_Autoconnect = 0                              #whether to autoconnect on launch to:
 Server_IP = ""                                      #the server on this ip
 Server_port = ""                                    #at this port
+

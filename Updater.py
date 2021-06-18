@@ -4,7 +4,7 @@ from os.path import exists, join, abspath
 import sys
 from PyQt5.QtGui import QIcon, QPixmap, QCursor
 from PyQt5.QtCore import QObject, QThread, pyqtSignal, QRect, Qt, QMetaObject, QCoreApplication
-from PyQt5.QtWidgets import QDialog, QTextBrowser, QWidget, QPushButton, QLineEdit, QFileDialog, QLabel, QApplication, QProgressBar
+from PyQt5.QtWidgets import QDialog, QTextBrowser, QWidget, QPushButton, QLineEdit, QFileDialog, QLabel, QApplication, QProgressBar, QMessageBox
 from getpass import getuser
 from datetime import datetime
 import Custom
@@ -53,7 +53,7 @@ class Ui_Dialog(object):
         self.aboutbutton.setGeometry(QRect(391, 285, 20, 20))
         self.aboutbutton.setObjectName("pushButton")
         self.aboutbutton.setCursor(QCursor(Qt.PointingHandCursor))
-
+        self.aboutbutton.clicked.connect(self.knopka)
         self.retranslateUi(Dialog)
         QMetaObject.connectSlotsByName(Dialog)
 
@@ -69,6 +69,18 @@ class Ui_Dialog(object):
         self.aboutbutton.setText(_translate("Dialog", "?"))
         self.dirselect.setText(_translate("Dialog", "..."))
     
+    def knopka(self):
+        icon = QIcon()
+        icon.addPixmap(QPixmap(resource_path("icon.ico")), QIcon.Normal, QIcon.Off)
+        msgBox = QMessageBox()
+        msgBox.setText("<h1>Customizable minecraft modpack launcher</h1>")
+        msgBox.setInformativeText(f"written by bopchik and pepfof\n{Custom.Modpack_name} by {Custom.Modpack_author}\n")
+        msgBox.setWindowTitle("About")
+        msgBox.setWindowIcon(icon)
+        msgBox.setIcon(QMessageBox.Information)
+        msgBox.setStandardButtons(QMessageBox.Ok)
+        msgBox.exec()
+
     def updateLog(self, input):
         original = self.log
         self.log = datetime.now().strftime("[%H:%M:%S] ") + input + "\n" + original
