@@ -1,8 +1,12 @@
-Modpack_name = "Memcraft"                           #appears in updater and launcher messages
+Modpack_name = "Memcraft"                  #appears in the about dialog
+Modpack_author = "pepfof"                                                        #appears in the about dialog
+Modpack_url = "https://pepfof.com"                                                       #link to this appears in the about dialog
+Modpack_license_name = "Creative Commons 0 license"                                      #"Your modpack is licensed under the --"
+Modpack_license_url = "https://creativecommons.org/share-your-work/public-domain/cc0/"   #license name links to this
+
 Launcher_title = "Memcraft Launcher"                #name of launcher window
 Updater_title = "Memcraft Mod downloader"           #name of updater window
 Launcher_folder_path = ".memcraft"                  #this is relative to the user/home folder
-Modpack_author = "pepfof"
 
 Forge_version = "1.12.2-14.23.5.2855"               #exact forge version names can be found on the forge website
 Forge_version_name = "1.12.2-forge-14.23.5.2855"    #the folder forge generates in the minecraft/versions folder, as well as the name it shows in the vanilla minecraft launcher. Find this one out yourself
