@@ -9,6 +9,7 @@ Is_below_1_13 = 1                                   #set to 1 if running 1.12.2.
 Min_Mem = 2048                                      #suggested memory allocation in the launcher
 
 Source_URL = "https://pepfof.com/minecraft/"        #url of the distributor folder
+
 Server_Autoconnect = 1                              #whether to autoconnect on launch to:
 Server_IP = "217.107.197.90"                        #the server on this ip
 Server_port = "25565"                               #at this port

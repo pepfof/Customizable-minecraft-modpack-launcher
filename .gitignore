@@ -127,3 +127,8 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+/.vs/slnx.sqlite
+/.vs/ProjectSettings.json
+/.vs/Customizable-minecraft-modpack-launcher/v16/.suo
+/.vs/VSWorkspaceState.json
+/dir.txt
