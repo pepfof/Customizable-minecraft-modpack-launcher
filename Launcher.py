@@ -102,7 +102,7 @@ class Ui_Dialog(object):
     def updateLog(self, input):
         original = self.log
         self.log = datetime.now().strftime("[%H:%M:%S] ") + input + "\n" + original
-        with open(join('.',"launcher_latest.log"), 'w') as file:
+        with open(join(path,"launcher_latest.log"), 'w') as file:
             file.write(self.log)
         self.textBrowser.setPlainText(self.log)
 
