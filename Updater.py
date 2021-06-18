@@ -179,7 +179,7 @@ class Worker(QObject):
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
-    Dialog = QtWidgets.QDialog(None, QtCore.Qt.WindowSystemMenuHint | QtCore.Qt.WindowTitleHint)
+    Dialog = QtWidgets.QDialog(None, QtCore.Qt.WindowSystemMenuHint | QtCore.Qt.WindowTitleHint | QtCore.Qt.WindowCloseButtonHint)
     ui = Ui_Dialog()
     ui.setupUi(Dialog)
     Dialog.show()
