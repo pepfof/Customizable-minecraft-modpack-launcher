@@ -1,11 +1,12 @@
-Modpack_name = "Minecraft Modpack"                  #appears in updater and launcher messages
+Modpack_name = "Minecraft Modpack"                  #appears in the about dialog
+Modpack_author = "Modpack Author"                                                        #appears in the about dialog
+Modpack_url = "https://pepfof.com"                                                       #link to this appears in the about dialog
+Modpack_license_name = "Creative Commons 0 license"                                      #"Your modpack is licensed under the --"
+Modpack_license_url = "https://creativecommons.org/share-your-work/public-domain/cc0/"   #license name links to this
+
 Launcher_title = "Modpack Launcher"                 #name of launcher window
 Updater_title = "Modpack Updater"                   #name of updater window
 Launcher_folder_path = ".minecraft_modpack"         #this is relative to the user/home folder
-Modpack_author = "Modpack Author"
-Modpack_url = "https://pepfof.com"
-Modpack_license_name = "Creative Commons 0 license"
-Modpack_license_url = "https://creativecommons.org/share-your-work/public-domain/cc0/"
 
 Forge_version = "1.12.2-14.23.5.2855"               #exact forge version names can be found on the forge website
 Forge_version_name = "1.12.2-forge-14.23.5.2855"    #the folder forge generates in the minecraft/versions folder, as well as the name it shows in the vanilla minecraft launcher. Find this one out yourself
