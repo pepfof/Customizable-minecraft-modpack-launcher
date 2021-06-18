@@ -8,8 +8,9 @@ import subprocess
 from os.path import exists, join, abspath, expanduser
 from shutil import rmtree
 import sys
-from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtCore import QObject, QThread, pyqtSignal
+from PyQt5.QtCore import QObject, QThread, pyqtSignal, QRect, Qt, QCoreApplication, QMetaObject
+from PyQt5.QtGui import QPixmap, QIcon, QCursor
+from PyQt5.QtWidgets import QLabel, QLineEdit, QPushButton, QProgressBar, QTextBrowser, QApplication, QDialog
 from time import sleep
 from datetime import datetime
 import Custom
@@ -26,51 +27,51 @@ class Ui_Dialog(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName(Custom.Launcher_title)
         Dialog.setFixedSize(423, 320)
-        icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(resource_path("icon.ico")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon = QIcon()
+        icon.addPixmap(QPixmap(resource_path("icon.ico")), QIcon.Normal, QIcon.Off)
         Dialog.setWindowIcon(icon)
-        self.lineEdit = QtWidgets.QLineEdit(Dialog)
-        self.lineEdit.setGeometry(QtCore.QRect(10, 30, 281, 24))
+        self.lineEdit = QLineEdit(Dialog)
+        self.lineEdit.setGeometry(QRect(10, 30, 281, 24))
         self.lineEdit.setObjectName("lineEdit")
-        self.lineEdit_2 = QtWidgets.QLineEdit(Dialog)
-        self.lineEdit_2.setGeometry(QtCore.QRect(310, 30, 101, 24))
+        self.lineEdit_2 = QLineEdit(Dialog)
+        self.lineEdit_2.setGeometry(QRect(310, 30, 101, 24))
         self.lineEdit_2.setObjectName("lineEdit_2")
-        self.label = QtWidgets.QLabel(Dialog)
-        self.label.setGeometry(QtCore.QRect(10, 10, 71, 16))
+        self.label = QLabel(Dialog)
+        self.label.setGeometry(QRect(10, 10, 71, 16))
         self.label.setObjectName("label")
-        self.label_2 = QtWidgets.QLabel(Dialog)
-        self.label_2.setGeometry(QtCore.QRect(310, 10, 101, 16))
-        self.label_2.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
+        self.label_2 = QLabel(Dialog)
+        self.label_2.setGeometry(QRect(310, 10, 101, 16))
+        self.label_2.setAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
         self.label_2.setObjectName("label_2")
-        self.progressBar = QtWidgets.QProgressBar(Dialog)
-        self.progressBar.setGeometry(QtCore.QRect(10, 86, 281, 16))
+        self.progressBar = QProgressBar(Dialog)
+        self.progressBar.setGeometry(QRect(10, 86, 281, 16))
         self.progressBar.setProperty("value", 0)
         self.progressBar.setObjectName("progressBar")
-        self.pushButton = QtWidgets.QPushButton(Dialog)
-        self.pushButton.setGeometry(QtCore.QRect(310, 63, 101, 39))
+        self.pushButton = QPushButton(Dialog)
+        self.pushButton.setGeometry(QRect(310, 63, 101, 39))
         self.pushButton.setObjectName("pushButton")
-        self.pushButton.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.pushButton.setCursor(QCursor(Qt.PointingHandCursor))
         self.pushButton.clicked.connect(self.runLongTask)
-        self.aboutbutton = QtWidgets.QPushButton(Dialog)
-        self.aboutbutton.setGeometry(QtCore.QRect(391, 294, 20, 20))
+        self.aboutbutton = QPushButton(Dialog)
+        self.aboutbutton.setGeometry(QRect(391, 294, 20, 20))
         self.aboutbutton.setObjectName("pushButton")
-        self.aboutbutton.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
-        self.textBrowser = QtWidgets.QTextBrowser(Dialog)
-        self.textBrowser.setGeometry(QtCore.QRect(10, 115, 401, 175))
+        self.aboutbutton.setCursor(QCursor(Qt.PointingHandCursor))
+        self.textBrowser = QTextBrowser(Dialog)
+        self.textBrowser.setGeometry(QRect(10, 115, 401, 175))
         self.textBrowser.setObjectName("textBrowser")
-        self.label_3 = QtWidgets.QLabel(Dialog)
-        self.label_3.setGeometry(QtCore.QRect(10, 60, 281, 21))
-        self.label_3.setTextFormat(QtCore.Qt.MarkdownText)
+        self.label_3 = QLabel(Dialog)
+        self.label_3.setGeometry(QRect(10, 60, 281, 21))
+        self.label_3.setTextFormat(Qt.MarkdownText)
         self.label_3.setScaledContents(False)
         self.label_3.setObjectName("label_3")
 
         self.retranslateUi(Dialog)
-        QtCore.QMetaObject.connectSlotsByName(Dialog)
+        QMetaObject.connectSlotsByName(Dialog)
 
         self.log = " "
 
     def retranslateUi(self, Dialog):
-        _translate = QtCore.QCoreApplication.translate
+        _translate = QCoreApplication.translate
         Dialog.setWindowTitle(_translate("Dialog", Custom.Launcher_title))
         self.label.setText(_translate("Dialog", "Username:"))
         self.lineEdit_2.setInputMask(_translate("Dialog", "00000"))
@@ -132,8 +133,8 @@ class Worker(QObject):
 
     def run(self):
         global check
-        modifiers = QtWidgets.QApplication.keyboardModifiers()
-        if modifiers == QtCore.Qt.ShiftModifier:
+        modifiers = QApplication.keyboardModifiers()
+        if modifiers == Qt.ShiftModifier:
             force = True
         else:
             force = False
@@ -262,8 +263,8 @@ class Worker(QObject):
 
 
 if __name__ == "__main__":
-    app = QtWidgets.QApplication(sys.argv)
-    Dialog = QtWidgets.QDialog(None, QtCore.Qt.WindowSystemMenuHint | QtCore.Qt.WindowTitleHint | QtCore.Qt.WindowCloseButtonHint)
+    app = QApplication(sys.argv)
+    Dialog = QDialog(None, Qt.WindowSystemMenuHint | Qt.WindowTitleHint | Qt.WindowCloseButtonHint)
     ui = Ui_Dialog()
     ui.setupUi(Dialog)
     Dialog.show()

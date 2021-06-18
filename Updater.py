@@ -2,9 +2,9 @@ from requests import get
 from os import remove, makedirs, mkdir
 from os.path import exists, join, abspath
 import sys
-from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtCore import QObject, QThread, pyqtSignal
-from PyQt5.QtWidgets import QWidget, QPushButton, QLineEdit, QFileDialog, QApplication
+from PyQt5.QtGui import QIcon, QPixmap, QCursor
+from PyQt5.QtCore import QObject, QThread, pyqtSignal, QRect, Qt, QMetaObject, QCoreApplication
+from PyQt5.QtWidgets import QDialog, QTextBrowser, QWidget, QPushButton, QLineEdit, QFileDialog, QLabel, QApplication, QProgressBar
 from getpass import getuser
 from datetime import datetime
 import Custom
@@ -23,44 +23,44 @@ class Ui_Dialog(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName(Custom.Updater_title)
         Dialog.setFixedSize(423, 311)
-        icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(resource_path("icon.ico")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon = QIcon()
+        icon.addPixmap(QPixmap(resource_path("icon.ico")), QIcon.Normal, QIcon.Off)
         Dialog.setWindowIcon(icon)
-        self.pushButton = QtWidgets.QPushButton(Dialog)
-        self.pushButton.setGeometry(QtCore.QRect(310, 10, 101, 44))
-        self.pushButton.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.pushButton = QPushButton(Dialog)
+        self.pushButton.setGeometry(QRect(310, 10, 101, 44))
+        self.pushButton.setCursor(QCursor(Qt.PointingHandCursor))
         self.pushButton.setObjectName("pushButton")
-        self.lineEdit = QtWidgets.QLineEdit(Dialog)
-        self.lineEdit.setGeometry(QtCore.QRect(10, 30, 252, 24))
+        self.lineEdit = QLineEdit(Dialog)
+        self.lineEdit.setGeometry(QRect(10, 30, 252, 24))
         self.lineEdit.setObjectName("lineEdit")
-        self.label = QtWidgets.QLabel(Dialog)
-        self.label.setGeometry(QtCore.QRect(10, 10, 121, 16))
+        self.label = QLabel(Dialog)
+        self.label.setGeometry(QRect(10, 10, 121, 16))
         self.label.setObjectName("label")
-        self.dirselect = QtWidgets.QPushButton(Dialog)
-        self.dirselect.setGeometry(QtCore.QRect(260, 30, 24, 24))
-        self.dirselect.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.dirselect = QPushButton(Dialog)
+        self.dirselect.setGeometry(QRect(260, 30, 24, 24))
+        self.dirselect.setCursor(QCursor(Qt.PointingHandCursor))
         self.dirselect.setObjectName("dirselect")
-        self.textBrowser = QtWidgets.QTextBrowser(Dialog)
-        self.textBrowser.setGeometry(QtCore.QRect(10, 95, 401, 186))
+        self.textBrowser = QTextBrowser(Dialog)
+        self.textBrowser.setGeometry(QRect(10, 95, 401, 186))
         self.textBrowser.setObjectName("textBrowser")
-        self.progressBar = QtWidgets.QProgressBar(Dialog)
-        self.progressBar.setGeometry(QtCore.QRect(10, 70, 401, 23))
+        self.progressBar = QProgressBar(Dialog)
+        self.progressBar.setGeometry(QRect(10, 70, 401, 23))
         self.progressBar.setProperty("value", 0)
         self.progressBar.setObjectName("progressBar")
         self.pushButton.clicked.connect(self.runLongTask)
         self.dirselect.clicked.connect(self.dirselecting)
-        self.aboutbutton = QtWidgets.QPushButton(Dialog)
-        self.aboutbutton.setGeometry(QtCore.QRect(391, 285, 20, 20))
+        self.aboutbutton = QPushButton(Dialog)
+        self.aboutbutton.setGeometry(QRect(391, 285, 20, 20))
         self.aboutbutton.setObjectName("pushButton")
-        self.aboutbutton.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.aboutbutton.setCursor(QCursor(Qt.PointingHandCursor))
 
         self.retranslateUi(Dialog)
-        QtCore.QMetaObject.connectSlotsByName(Dialog)
+        QMetaObject.connectSlotsByName(Dialog)
 
         self.log = " "
         
     def retranslateUi(self, Dialog):
-        _translate = QtCore.QCoreApplication.translate
+        _translate = QCoreApplication.translate
         Dialog.setWindowTitle(_translate("Dialog", Custom.Updater_title))
         self.aboutbutton.setToolTip(_translate("Dialog", "About"))
         self.label.setText(_translate("Dialog", "Minecraft Directory:"))
@@ -113,8 +113,8 @@ class Worker(QObject):
         self.lineEdit_set.emit(0)
         self.pushButton.emit(0)
         global check
-        modifiers = QtWidgets.QApplication.keyboardModifiers()
-        if modifiers == QtCore.Qt.ShiftModifier:
+        modifiers = QApplication.keyboardModifiers()
+        if modifiers == Qt.ShiftModifier:
             force = True
         else:
             force = False
@@ -124,7 +124,7 @@ class Worker(QObject):
             self.finished.emit()
             return 0
         
-        fpath=ui.lineEdit.text()
+        fpath = ui.lineEdit.text()
 
         path_to_txtn = join(path, 'dir.txt')
         with open(path_to_txtn, 'w') as file:
@@ -141,7 +141,7 @@ class Worker(QObject):
             if(check):
                 check = False
 
-        req = get(Custom.Source_URL+"mine.txt")            
+        req = get(Custom.Source_URL + "mine.txt")            
         files_new = set(req.text.split('\n'))
         files_new.remove('')
         files_new = {a[1:].replace('\\', '/') for a in files_new}
@@ -150,9 +150,9 @@ class Worker(QObject):
                 if(exists(join(fpath,i))):
                     remove(join(fpath,i))
         self.logging.emit(f'Checking for updates...')        
-        req = get(Custom.Source_URL+"/dirs.txt")
+        req = get(Custom.Source_URL + "/dirs.txt")
         all_dirs = {i[1:].replace('\\', '/') for i in req.text.split('\n') if not exists(join(fpath,i[1:]))}
-        req = get(Custom.Source_URL+"remv.txt")
+        req = get(Custom.Source_URL + "remv.txt")
         files_delete = {i[1:].replace('\\', '/') for i in req.text.split('\n') if i != '' and exists(join(fpath,i[1:]))}
         for i in files_delete:
             remove(join(fpath,i))
@@ -178,8 +178,8 @@ class Worker(QObject):
         self.finished.emit()
 
 if __name__ == "__main__":
-    app = QtWidgets.QApplication(sys.argv)
-    Dialog = QtWidgets.QDialog(None, QtCore.Qt.WindowSystemMenuHint | QtCore.Qt.WindowTitleHint | QtCore.Qt.WindowCloseButtonHint)
+    app = QApplication(sys.argv)
+    Dialog = QDialog(None, Qt.WindowSystemMenuHint | Qt.WindowTitleHint | Qt.WindowCloseButtonHint)
     ui = Ui_Dialog()
     ui.setupUi(Dialog)
     Dialog.show()
