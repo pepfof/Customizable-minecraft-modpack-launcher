@@ -225,16 +225,16 @@ class Worker(QObject):
                 if(exists(path)):
                     rmtree(path)
                 install_forge_old_version(Custom.Forge_version, path, callback=callback)            
-            elif(not force):
-                if(not exists(join(path,'versions', Custom.Forge_version_name, Custom.Forge_version_name))):
+            else:
+                if(not exists(join(path,'versions', Custom.Forge_version_name, f'{Custom.Forge_version_name}.jar'))):
                     install_forge_old_version(Custom.Forge_version, path, callback=callback)
         else:
             if(force):
                 if(exists(path)):
                     rmtree(path)
                 install_forge_version(Custom.Forge_version, path, callback=callback)            
-            elif(not force):
-                if(not exists(join(path,'versions', Custom.Forge_version_name, Custom.Forge_version_name))):
+            else:
+                if(not exists(join(path,'versions', Custom.Forge_version_name, f'{Custom.Forge_version_name}.jar'))):
                     install_forge_version(Custom.Forge_version, path, callback=callback)
 
 
