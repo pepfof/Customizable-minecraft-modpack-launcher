@@ -75,11 +75,11 @@ class Ui_Dialog(object):
         icon = QIcon()
         icon.addPixmap(QPixmap(resource_path("icon.ico")), QIcon.Normal, QIcon.Off)
         msgBox = QMessageBox()
-        msgBox.setText(f'''<h2>Customizable minecraft modpack launcher</h2>
-        by bopchik and pepfof, licensed under the <a href = "https://github.com/pepfof/Customizable-minecraft-modpack-launcher/blob/main/LICENSE">BSD 2-clause license</a><br>
-        <a href = "https://gitlab.com/JakobDev/minecraft-launcher-lib">Minecraft Launcher Lib by JakobDev</a>, licensed under the <a href = "https://gitlab.com/JakobDev/minecraft-launcher-lib/-/blob/master/LICENSE">BSD 2-clause license</a><br><br><br>
-        
-        {Custom.Modpack_name} by {Custom.Modpack_author}''')
+        msgBox.setText(f'''<a href = "https://github.com/pepfof/Customizable-minecraft-modpack-launcher"><h2>Customizable minecraft modpack launcher</h2></a> by bopchik and pepfof<br>licensed under the <a href = "https://github.com/pepfof/Customizable-minecraft-modpack-launcher/blob/main/LICENSE">BSD 2-clause license</a><br><br>
+        Written using <a href = "https://gitlab.com/JakobDev/minecraft-launcher-lib">Minecraft Launcher Lib by JakobDev</a><br> licensed under the <a href = "https://gitlab.com/JakobDev/minecraft-launcher-lib/-/blob/master/LICENSE">BSD 2-clause license</a><br><br>
+        Modpack:<br>
+        <a href = "{Custom.Modpack_url}">{Custom.Modpack_name} by {Custom.Modpack_author}</a><br>
+        licensed under the <a href = "{Custom.Modpack_license_url}">{Custom.Modpack_license_name}</a>''')
         
         msgBox.setWindowTitle("About")
         msgBox.setWindowIcon(icon)
