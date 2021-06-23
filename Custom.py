@@ -1,5 +1,7 @@
+
 Modpack_name = "Memcraft"                  #appears in the about dialog
 Modpack_author = "pepfof"                                                        #appears in the about dialog
+
 Modpack_url = "https://pepfof.com"                                                       #link to this appears in the about dialog
 Modpack_license_name = "Creative Commons 0 license"                                      #"Your modpack is licensed under the --"
 Modpack_license_url = "https://creativecommons.org/share-your-work/public-domain/cc0/"   #license name links to this
