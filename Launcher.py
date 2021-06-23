@@ -258,7 +258,7 @@ class Worker(QObject):
         req = get(Custom.Source_URL+"mine.txt")
         files_new = set(req.text.split('\n'))
         files_new.remove('')
-        files_new = {a[1:].replace('\\', '/') for a in files_new}Merge updates
+        files_new = {a[1:].replace('\\', '/') for a in files_new}
         req = get(Custom.Source_URL+"dirs.txt")
         all_dirs = {i[1:].replace(
             '\\', '/') for i in req.text.split('\n') if not exists(join(path, i[1:]))}
