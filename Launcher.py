@@ -107,9 +107,8 @@ class Ui_Dialog(object):
 
     def updateLog(self, input):
         original = self.log
-        self.log = datetime.now().strftime(
-            "[%H:%M:%S] ") + input + "\n" + original
-        with open(join('.', "launcher_latest.log"), 'w') as file:
+        self.log = datetime.now().strftime("[%H:%M:%S] ") + input + "\n" + original
+        with open(join('.',"launcher_latest.log"), 'w') as file:
             file.write(self.log)
         self.textBrowser.setPlainText(self.log)
 
@@ -259,7 +258,7 @@ class Worker(QObject):
         req = get(Custom.Source_URL+"mine.txt")
         files_new = set(req.text.split('\n'))
         files_new.remove('')
-        files_new = {a[1:].replace('\\', '/') for a in files_new}
+        files_new = {a[1:].replace('\\', '/') for a in files_new}Merge updates
         req = get(Custom.Source_URL+"dirs.txt")
         all_dirs = {i[1:].replace(
             '\\', '/') for i in req.text.split('\n') if not exists(join(path, i[1:]))}
