@@ -164,6 +164,7 @@ class Worker(QObject):
             if(check):
                 check = False
 
+        up_to_date = False
         req = get(Custom.Source_URL + "mine.txt")
         files_new = set(req.text.split('\n'))
         files_new.remove('')
@@ -172,7 +173,7 @@ class Worker(QObject):
             for i in files_new:
                 if(exists(join(fpath, i))):
                     remove(join(fpath, i))
-        self.logging.emit(f'Checking for updates...')
+        self.logging.emit(f'Checking for {Custom.Modpack_name} updates...')
         req = get(Custom.Source_URL + "/dirs.txt")
         all_dirs = {i[1:].replace(
             '\\', '/') for i in req.text.split('\n') if not exists(join(fpath, i[1:]))}
@@ -184,18 +185,27 @@ class Worker(QObject):
         for i in all_dirs:
             if(not exists(join(fpath, i))):
                 makedirs(join(fpath, i))
+
         if(not force):
             files_new = {i for i in files_new if not exists(join(fpath, i))}
+
+        if(files_delete == files_new):
+            self.logging.emit('Already up to date!')
+            up_to_date = True
+
         counter = 0
+
         for i in files_new:
             with open(join(fpath, i), 'wb') as f:
                 ufr = get(f"{Custom.Source_URL}{i}")
                 f.write(ufr.content)
                 counter += 1
                 self.progressbar(counter, len(files_new))
-                self.logging.emit(f'Download {i}')
-
-        self.logging.emit(f"Done updating {Custom.Modpack_name}!")
+                if(not up_to_date):
+                    self.logging.emit(f'Download {i}')
+        
+        if(not up_to_date):
+            self.logging.emit(f"Done updating {Custom.Modpack_name}!")
         self.progressbar(1, 0)
         self.dirselect.emit(1)
         self.lineEdit_set.emit(1)
