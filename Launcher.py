@@ -147,9 +147,13 @@ class Worker(QObject):
     lineEdit2_set = pyqtSignal(int)
     progressBar = pyqtSignal(str, int)
 
-    def progressbar(self, counter, all):
-        self.progressBar.emit("maximum", all)
-        self.progressBar.emit("value", counter)
+    def progressbar(self, counter, all, up_to_date):
+        if(up_to_date):
+            self.progressBar.emit("maximum", 1)
+            self.progressBar.emit("value", 1)
+        else:
+            self.progressBar.emit("maximum", all)
+            self.progressBar.emit("value", counter)
         return 0
 
     def reportTwice(self, input):
@@ -184,6 +188,8 @@ class Worker(QObject):
                 return 0
             if(check):
                 check = False
+        
+        up_to_date = False
 
         self.pushButton.emit(0)
         self.lineEdit2_set.emit(0)
@@ -223,37 +229,39 @@ class Worker(QObject):
 
         callback = {
             "setStatus": lambda text: self.reportTwice(text),
-            "setProgress": lambda value: self.progressbar(value, max_value[0]),
+            "setProgress": lambda value: self.progressbar(value, max_value[0], up_to_date),
             "setMax": lambda value: maximum(max_value, value)
         }
-
-        self.reportTwice(f'Downloading and installing minecraft forge...')
 
         if(Custom.Is_below_1_13):
             if(force):
                 if(exists(path)):
                     rmtree(path)
+                self.reportTwice(f'Downloading and installing minecraft forge...')
                 install_forge_old_version(
                     Custom.Forge_version, path, callback=callback)
             else:
                 if(not exists(join(path, 'versions', Custom.Forge_version_name, f'{Custom.Forge_version_name}.jar'))):
+                    self.reportTwice(f'Downloading and installing minecraft forge...')
                     install_forge_old_version(
                         Custom.Forge_version, path, callback=callback)
         else:
             if(force):
                 if(exists(path)):
                     rmtree(path)
+                self.reportTwice(f'Downloading and installing minecraft forge...')
                 install_forge_version(
                     Custom.Forge_version, path, callback=callback)
             else:
                 if(not exists(join(path, 'versions', Custom.Forge_version_name, f'{Custom.Forge_version_name}.jar'))):
+                    self.reportTwice(f'Downloading and installing minecraft forge...')
                     install_forge_version(
                         Custom.Forge_version, path, callback=callback)
 
         command = get_minecraft_command(
             Custom.Forge_version_name, path, options)
 
-        self.reportTwice(f'Downloading ' + Custom.Modpack_name)
+        self.reportTwice(f'Checking for {Custom.Modpack_name} updates...')
 
         req = get(Custom.Source_URL+"mine.txt")
         files_new = set(req.text.split('\n'))
@@ -270,25 +278,32 @@ class Worker(QObject):
         for i in all_dirs:
             if(not exists(join(path, i))):
                 makedirs(join(path, i))
+
         if(not force):
             files_new = {i for i in files_new if not exists(join(path, i))}
+
+        if(files_delete == files_new):
+            self.reportTwice('Already up to date!')
+            up_to_date = True
+
         counter = 0
         for i in files_new:
             with open(join(path, i), 'wb') as f:
                 ufr = get(f"{Custom.Source_URL}{i}")
                 f.write(ufr.content)
                 counter += 1
-                self.progressbar(counter, len(files_new))
-                self.logging.emit(f'Download {i}')
-
-        self.reportTwice(Custom.Modpack_name+" launched!")
-        self.progressbar(1, 0)
+                self.progressbar(counter, len(files_new), up_to_date)
+                if(not up_to_date):
+                    self.logging.emit(f'Download {i}')
+        up_to_date = False
+        self.reportTwice(Custom.Modpack_name + " launched!")
+        self.progressbar(1, 0, up_to_date)
         call(command, cwd=path)
         self.pushButton.emit(1)
         self.lineEdit2_set.emit(1)
         self.lineEdit_set.emit(1)
         self.label_3.emit("Ready!")
-        self.progressbar(0, 1)
+        self.progressbar(0, 1, up_to_date)
         self.finished.emit()
 
 
