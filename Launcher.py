@@ -6,7 +6,7 @@ from requests import get
 from os import remove, mkdir, makedirs
 import subprocess
 from os.path import exists, join, abspath, expanduser
-from shutil import rmtree
+from shutil import rmtree, move
 import sys
 from PyQt5.QtCore import QObject, QThread, pyqtSignal, QRect, Qt, QCoreApplication, QMetaObject
 from PyQt5.QtGui import QPixmap, QIcon, QCursor
@@ -228,10 +228,22 @@ class Worker(QObject):
         max_value = [0]
 
         callback = {
-            "setStatus": lambda text: self.reportTwice(text),
+            "setStatus": lambda text: self.logging.emit(text),
             "setProgress": lambda value: self.progressbar(value, max_value[0], up_to_date),
             "setMax": lambda value: maximum(max_value, value)
         }
+
+        if(force):
+            if(not exists(join('.', 'Temp_folder'))):
+                mkdir(join('.', 'Temp_folder'))
+            req = get(Custom.Source_URL+"save.txt")
+            files_save = set(req.text.split('\n'))
+            files_save.remove('')
+            if(len(files_save)):
+                files_save = {a[1:] for a in files_save}
+                for i in files_save:
+                    if(exists(join(path, i))):
+                        move(join(path, i),join('.', 'Temp_folder', i))
 
         if(Custom.Is_below_1_13):
             if(force):
@@ -287,6 +299,7 @@ class Worker(QObject):
             up_to_date = True
 
         counter = 0
+
         for i in files_new:
             with open(join(path, i), 'wb') as f:
                 ufr = get(f"{Custom.Source_URL}{i}")
@@ -294,7 +307,18 @@ class Worker(QObject):
                 counter += 1
                 self.progressbar(counter, len(files_new), up_to_date)
                 if(not up_to_date):
-                    self.logging.emit(f'Download {i}')
+                    self.reportTwice.emit(f'Download {i}')
+
+        if(force):
+            if(len(files_save)):
+                for i in files_save:
+                    if(exists(join('.', 'Temp_folder', i))):
+                        if(exists(join(path, i))):
+                            remove(join(path, i))
+                        move(join('.', 'Temp_folder', i), join(path, i))
+                if(exists(join('.', 'Temp_folder'))):
+                    rmtree(join('.', 'Temp_folder'))
+
         up_to_date = False
         self.reportTwice(Custom.Modpack_name + " launched!")
         self.progressbar(1, 0, up_to_date)
