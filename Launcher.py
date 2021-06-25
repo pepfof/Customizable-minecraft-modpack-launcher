@@ -228,7 +228,7 @@ class Worker(QObject):
         max_value = [0]
 
         callback = {
-            "setStatus": lambda text: self.logging.emit(text),
+            "setStatus": lambda text: self.reportTwice(text),
             "setProgress": lambda value: self.progressbar(value, max_value[0], up_to_date),
             "setMax": lambda value: maximum(max_value, value)
         }
