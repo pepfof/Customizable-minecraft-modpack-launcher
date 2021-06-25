@@ -307,7 +307,7 @@ class Worker(QObject):
                 counter += 1
                 self.progressbar(counter, len(files_new), up_to_date)
                 if(not up_to_date):
-                    self.reportTwice.emit(f'Download {i}')
+                    self.reportTwice(f'Download {i}')
 
         if(force):
             if(len(files_save)):
