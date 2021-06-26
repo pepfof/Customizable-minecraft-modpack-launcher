@@ -4,6 +4,4 @@ sed -i 's \./ \\ g' mine.txt
 sed -i 's / \\ g' mine.txt  
 sed -i 's \./ \\ g' dirs.txt 
 sed -i 's / \\ g' dirs.txt
-git add -A
-git commit
-git push
+touch remv.txt

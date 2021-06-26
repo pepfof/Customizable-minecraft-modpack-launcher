@@ -1,3 +1,4 @@
 \mine.txt
 \dirs.txt
-\generate&upload.sh
+\save.txt
+\remv.txt

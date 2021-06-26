@@ -7,6 +7,7 @@ from PyQt5.QtCore import QObject, QThread, pyqtSignal, QRect, Qt, QMetaObject, Q
 from PyQt5.QtWidgets import QDialog, QTextBrowser, QWidget, QPushButton, QLineEdit, QFileDialog, QLabel, QApplication, QProgressBar, QMessageBox
 from getpass import getuser
 from datetime import datetime
+from shutil import move, rmtree
 import Custom
 
 
@@ -164,6 +165,18 @@ class Worker(QObject):
             if(check):
                 check = False
 
+        if(force):
+            if(not exists(join('.', 'Temp_folder_update'))):
+                mkdir(join('.', 'Temp_folder_update'))
+            req = get(Custom.Source_URL+"save.txt")
+            files_save = set(req.text.split('\n'))
+            files_save.remove('')
+            if(len(files_save)):
+                files_save = {a[1:] for a in files_save}
+                for i in files_save:   
+                    if(exists(join(fpath, i))):
+                        move(join(fpath, i),join('.', 'Temp_folder_update', i))
+
         up_to_date = False
         req = get(Custom.Source_URL + "mine.txt")
         files_new = set(req.text.split('\n'))
@@ -203,6 +216,16 @@ class Worker(QObject):
                 self.progressbar(counter, len(files_new))
                 if(not up_to_date):
                     self.logging.emit(f'Download {i}')
+
+        if(force):
+            if(len(files_save)):
+                for i in files_save:
+                    if(exists(join('.', 'Temp_folder_update', i))):
+                        if(exists(join(fpath, i))):
+                            remove(join(fpath, i))
+                        move(join('.', 'Temp_folder_update', i), join(fpath, i))
+                if(exists(join('.', 'Temp_folder_update'))):
+                    rmtree(join('.', 'Temp_folder_update'))
         
         if(not up_to_date):
             self.logging.emit(f"Done updating {Custom.Modpack_name}!")
