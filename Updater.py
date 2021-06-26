@@ -187,7 +187,7 @@ class Worker(QObject):
                 if(exists(join(fpath, i))):
                     remove(join(fpath, i))
         self.logging.emit(f'Checking for {Custom.Modpack_name} updates...')
-        req = get(Custom.Source_URL + "/dirs.txt")
+        req = get(Custom.Source_URL + "dirs.txt")
         all_dirs = {i[1:].replace(
             '\\', '/') for i in req.text.split('\n') if not exists(join(fpath, i[1:]))}
         req = get(Custom.Source_URL + "remv.txt")
