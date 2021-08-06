@@ -344,7 +344,7 @@ if __name__ == "__main__":
     if(not exists(path)):
         mkdir(path)
 
-    default_ram = '2048'
+    default_ram = Custom.Min_Mem
     ram = ''
     path_to_txtr = join(path, 'ram.txt')
     if(exists(path_to_txtr)):
